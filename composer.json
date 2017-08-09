@@ -1,0 +1,39 @@
+{
+  "name": "start-point/delayqueue-php",
+  "type": "library",
+  "description": "PHP client for DelayQueue",
+  "keywords": ["delayqueue","delayqueue-php"],
+  "homepage": "https://github.com/ouqiang/delayqueue-php",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ouqiang",
+      "email": "qingqianludao@gmail.com",
+      "homepage": "https://github.com/ouqiang"
+    }
+  ],
+  "require": {
+    "php": ">= 5.4",
+    "ext-pcntl": "*",
+    "monolog/monolog": "^1.0",
+    "guzzlehttp/guzzle": "^5.0",
+    "psr/container": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.5.*"
+  },
+  "bin": [
+    "bin/delayqueue-php"
+  ],
+  "autoload": {
+    "psr-4": {
+      "DelayQueue\\": "src/",
+      "Demo\\": "demo/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "DelayQueue\\Tests\\": "tests/"
+    }
+  }
+}

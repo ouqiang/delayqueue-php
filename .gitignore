@@ -1,0 +1,6 @@
+# phpstorm
+.idea
+
+# composer
+composer.lock
+vendor
