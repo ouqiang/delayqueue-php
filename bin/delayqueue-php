@@ -1,2 +1,34 @@
 #!/usr/bin/env php
 <?php
+
+use DelayQueue\Process\Worker;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+if (!defined('STDIN') || php_sapi_name() !== 'cli') {
+    echo 'only run in cli';
+    exit(1);
+}
+
+if (!extension_loaded('pcntl') || !extension_loaded('posix')) {
+    echo 'extension pcntl, posix not loaded';
+    exit(2);
+}
+
+// 启动的worker数量
+$workerNum = 5;
+// 延迟队列服务器地址
+$server = 'http://127.0.0.1:9277';
+
+for ($i = 0; $i < $workerNum; $i++) {
+    $pid = pcntl_fork();
+    if ($pid < 0) {
+        throw new Exception('fork failed');
+    }
+    if ($pid === 0) {
+        // 子进程
+        $worker = new Worker();
+        $worker->run();
+        break;
+    }
+}

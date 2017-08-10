@@ -1,0 +1,31 @@
+{
+  "name": "delayqueue-php",
+  "version": "1.0.0",
+  "description": "[延迟队列](https://github.com/ouqiang/delay-queue)PHP客户端",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ouqiang/delayqueue-php.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ouqiang/delayqueue-php/issues"
+  },
+  "homepage": "https://github.com/ouqiang/delayqueue-php#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

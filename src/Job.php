@@ -6,7 +6,7 @@ namespace DelayQueue;
 use JsonSerializable;
 
 /**
- * 延迟队列中存放的Job
+ * Job实体
  */
 class Job implements JsonSerializable
 {
@@ -113,6 +113,15 @@ class Job implements JsonSerializable
     public function setBody(array $body)
     {
         $this->body = $body;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function appendValueToBody($key, $value)
+    {
+        $this->body[$key] = $value;
     }
 
     /**
