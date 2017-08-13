@@ -1,34 +1,88 @@
 #!/usr/bin/env php
 <?php
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Processor\PsrLogMessageProcessor;
 use DelayQueue\Process\Worker;
+use DelayQueue\DelayQueue;
+use DelayQueue\Container\Container;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-if (!defined('STDIN') || php_sapi_name() !== 'cli') {
+
+if (php_sapi_name() !== 'cli') {
     echo 'only run in cli';
     exit(1);
 }
 
 if (!extension_loaded('pcntl') || !extension_loaded('posix')) {
     echo 'extension pcntl, posix not loaded';
-    exit(2);
+    exit(1);
 }
 
-// 启动的worker数量
-$workerNum = 5;
-// 延迟队列服务器地址
-$server = 'http://127.0.0.1:9277';
-
-for ($i = 0; $i < $workerNum; $i++) {
-    $pid = pcntl_fork();
-    if ($pid < 0) {
-        throw new Exception('fork failed');
-    }
-    if ($pid === 0) {
-        // 子进程
-        $worker = new Worker();
-        $worker->run();
-        break;
-    }
+$options = getopt('c:');
+if (!$options || !isset($options['c'])) {
+    echo 'usage: delayqueue-php -c /path/to/config.ini';
+    exit(1);
 }
+
+if (!file_exists($options['c'])) {
+    echo "can not find config file {$options['c']}";
+    exit(1);
+}
+
+$config = parse_ini_file($options['c']);
+if (!$config) {
+    echo 'invalid config file';
+    exit(1);
+}
+
+$server = isset($config['server']) ? trim($config['server']) : 'http://127.0.0.1:9277';
+$topic = isset($config['topic']) ? trim($config['topic']) : null;
+$pollingTimeout = isset($config['polling_timeout']) ? intval($config['polling_timeout']) : 200;
+$bootstrap = isset($config['bootstrap']) ? trim($config['bootstrap']) : '';
+
+if (!$topic) {
+    echo 'invalid topic';
+    exit(1);
+}
+
+if ($bootstrap && file_exists($bootstrap)) {
+    require_once  $config['bootstrap'];
+}
+
+$container = new Container();
+$container->set('logger', function () {
+    $logger = new Logger('delay-queue');
+    $logger->pushHandler(
+        new StreamHandler(
+            'php://stdout',
+            Logger::INFO,
+            true,
+            null,
+            true)
+    );
+    $logger->pushProcessor(new PsrLogMessageProcessor());
+
+    return $logger;
+});
+
+$container->set('delayQueue', function () use($server, $pollingTimeout) {
+    $delayQueue = new DelayQueue($server);
+    $delayQueue->setTimeout($pollingTimeout);
+
+    return $delayQueue;
+});
+
+$topics = explode(',', $config['topic']);
+
+$worker = new Worker($container);
+$worker->setTopics($topics);
+$container['logger']->notice('Starting worker',
+    [
+        'pid' => getmypid(),
+        'topic' => $config['topic'],
+    ]
+);
+$worker->run();

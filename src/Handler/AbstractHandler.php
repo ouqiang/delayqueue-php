@@ -2,8 +2,19 @@
 
 namespace DelayQueue\Handler;
 
+use DelayQueue\Container\ContainerAwareTrait;
+use Exception;
+
+/**
+ * Job处理抽象类
+ *
+ * Class AbstractHandler
+ * @package DelayQueue\Handler
+ */
 abstract class AbstractHandler implements HandlerInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var string Job唯一标识
      */
@@ -25,7 +36,7 @@ abstract class AbstractHandler implements HandlerInterface
     /**
      * @param array $body
      */
-    public function setBody($body)
+    public function setBody(array $body)
     {
         $this->body = $body;
     }
@@ -36,8 +47,9 @@ abstract class AbstractHandler implements HandlerInterface
 
         try {
             $this->perform();
-        } catch (\Exception $exception) {
-
+            $this->delayQueue->finish($this->id);
+        } catch (Exception $exception) {
+            $this->logger->warning(sprintf('Job execution failed %s', $exception->getMessage()));
         }
 
         $this->tearDown();

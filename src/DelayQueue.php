@@ -54,14 +54,7 @@ class DelayQueue
      */
     public function push($className, Job $job)
     {
-        if (!class_exists($className)) {
-            throw new ClassNotFoundException(sprintf('can not find class [%s]', $className));
-        }
-        $reflection = new ReflectionClass($className);
-        $parentClassName = 'DelayQueue\Handler\AbstractHandler';
-        if (!$reflection->isSubclassOf($parentClassName)) {
-            throw new SubClassException(sprintf('[%s] is not subclass of [%s]', $className, $parentClassName));
-        }
+        $this->validateClassName($className);
         $job->appendValueToBody('className', $className);
 
         $response = $this->getHttpClient()->post('/push', [
@@ -80,6 +73,9 @@ class DelayQueue
      */
     public function pop(array $topics)
     {
+        if (!$topics) {
+            return null;
+        }
         $response = $this->getHttpClient()->post('/pop', [
             'json' => [
                 'topic' => implode(',', $topics),
@@ -92,8 +88,14 @@ class DelayQueue
             return null;
         }
 
+        if (!isset($data['data']['id']) || !isset($data['data']['body'])) {
+            throw new InvalidResponseBodyException('response body miss required parameter, id or body');
+        }
         $id        = $data['data']['id'];
         $body      = json_decode($data['data']['body'], true);
+        if (!isset($body['className'])) {
+            throw new InvalidResponseBodyException('response body miss required parameter className');
+        }
         $className = $body['className'];
         unset($body['className']);
 
@@ -139,6 +141,17 @@ class DelayQueue
         ]);
         $body = $response->json();
         $this->checkResponseBody($body);
+    }
+
+    public function validateClassName($className) {
+        if (!class_exists($className)) {
+            throw new ClassNotFoundException(sprintf('can not find class [%s]', $className));
+        }
+        $reflection = new ReflectionClass($className);
+        $parentClassName = 'DelayQueue\Handler\AbstractHandler';
+        if (!$reflection->isSubclassOf($parentClassName)) {
+            throw new SubClassException(sprintf('[%s] is not subclass of [%s]', $className, $parentClassName));
+        }
     }
 
     protected function getHttpClient()
