@@ -3,10 +3,14 @@
 
 namespace DelayQueue\Tests;
 
+use DelayQueue\Container\Container;
 use DelayQueue\Job;
 use DelayQueue\DelayQueue;
 use DelayQueue\Util\Time;
 use DelayQueue\Handler\AbstractHandler;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 
 class DelayQueueTest extends \PHPUnit_Framework_TestCase
 {
@@ -91,7 +95,21 @@ class DelayQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($className, $data['className']);
         $this->assertEquals($job->body, $data['body']);
         /** @var AbstractHandler $class */
-        $class = new $data['className']();
+        $container = new Container();
+        $container->set('logger', function () {
+            $logger = new Logger('delay-queue');
+            $logger->pushHandler(
+                new StreamHandler(
+                    'php://stdout',
+                    Logger::INFO,
+                    true,
+                    null,
+                    true)
+            );
+
+            return $logger;
+        });
+        $class = new $data['className']($container);
         $class->setId($data['id']);
         $class->setBody($data['body']);
         $class->run();

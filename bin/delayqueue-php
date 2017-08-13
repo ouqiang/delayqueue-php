@@ -16,8 +16,8 @@ if (php_sapi_name() !== 'cli') {
     exit(1);
 }
 
-if (!extension_loaded('pcntl') || !extension_loaded('posix')) {
-    echo 'extension pcntl, posix not loaded';
+if (!extension_loaded('pcntl')) {
+    echo 'extension pcntl not loaded';
     exit(1);
 }
 
