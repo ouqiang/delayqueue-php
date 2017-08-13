@@ -22,19 +22,6 @@ $className = 'Demo\\Handler\\OrderHandler';
 try {
     // 添加一个Job到延迟队列
     $delayQueue->push($className, $job);
-
-    // 从延迟队列中删除Job
-    $delayQueue->delete('15702398321');
-
-    // 从队列中取出已过期的Job
-    $data = $delayQueue->pop(['order']);
-    // $data['className'] 处理Job的类名
-    // $data['id']        Job唯一标识
-    // $data['body']      Job自定义Body
-
-
-    // Job处理完成, 确认删除
-    $delayQueue->finish('15702398321');
 } catch (Exception $exception) {
     echo $exception->getMessage();
 }

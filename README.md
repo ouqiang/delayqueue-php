@@ -6,7 +6,6 @@
 依赖
 --------
 * PHP5.4+
-* Composer
 * ext-pcntl
 
 安装

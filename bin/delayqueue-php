@@ -8,7 +8,7 @@ use DelayQueue\Process\Worker;
 use DelayQueue\DelayQueue;
 use DelayQueue\Container\Container;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../../autoload.php';
 
 
 if (php_sapi_name() !== 'cli') {
