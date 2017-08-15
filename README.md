@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/ouqiang/delayqueue-php.png)](https://travis-ci.org/ouqiang/delayqueue-php)
 [![Latest Stable Version](https://poser.pugx.org/start-point/delayqueue-php/version)](https://packagist.org/packages/start-point/delayqueue-php)
 [![Total Downloads](https://poser.pugx.org/start-point/delayqueue-php/downloads)](https://packagist.org/packages/start-point/delayqueue-php)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ouqiang/delayqueue-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ouqiang/delayqueue-php/?branch=master)
 [![Latest Unstable Version](https://poser.pugx.org/start-point/delayqueue-php/v/unstable)](//packagist.org/packages/start-point/delayqueue-php)
 [![License](https://poser.pugx.org/start-point/delayqueue-php/license)](https://packagist.org/packages/start-point/delayqueue-php)
 [![composer.lock available](https://poser.pugx.org/start-point/delayqueue-php/composerlock)](https://packagist.org/packages/start-point/delayqueue-php)
